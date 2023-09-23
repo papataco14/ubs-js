@@ -32,19 +32,40 @@ function bestAlternativeForBusSlot(parkingCharges, buses, cars, bikes) {
             }
             return max;
         },
-        { value: 0 }
+        { value: -Infinity }
     );
 }
 
-// Main function
-function assignParkingSlots(
-    busSlots,
-    carSlots,
-    parkingCharges,
-    buses,
-    cars,
-    bikes
-) {
+// Helper function to choose the best parking alternative for a car slot
+function bestAlternativeForCarSlot(parkingCharges, cars, bikes) {
+    const alternatives = [
+        {
+            value: parkingCharges.Car,
+            require: { cars: 1, bikes: 0 },
+        },
+        {
+            value: 5 * parkingCharges.Bike,
+            require: { cars: 0, bikes: 5 },
+        },
+    ];
+
+    return alternatives.reduce(
+        (max, curr) => {
+            if (
+                curr.value > max.value &&
+                curr.require.cars <= cars &&
+                curr.require.bikes <= bikes
+            ) {
+                return curr;
+            }
+            return max;
+        },
+        { value: -Infinity }
+    );
+}
+
+// Main function for parking assignment
+function assignParkingSlots(busSlots, carSlots, parkingCharges, buses, cars, bikes) {
     let profit = 0;
 
     // Initialize rejections, reset negative values to zero
@@ -80,26 +101,22 @@ function assignParkingSlots(
         }
     }
 
-    // Cars in car slots
-    if (carSlots > 0 && cars <= carSlots) {
-        profit += cars * parkingCharges.Car;
-        carSlots -= cars;
-        cars = 0;
-    } else if (carSlots > 0) {
-        profit += carSlots * parkingCharges.Car;
-        cars -= carSlots;
-        carSlots = 0;
-    }
-
-    // Bikes in car slots
+    // Car slots
     if (carSlots > 0) {
-        const bikeRoom = carSlots * 5;
-        if (bikes <= bikeRoom) {
-            profit += bikes * parkingCharges.Bike;
-            bikes = 0;
-        } else {
-            profit += bikeRoom * parkingCharges.Bike;
-            bikes -= bikeRoom;
+        while (carSlots > 0) {
+            const bestAlternative = bestAlternativeForCarSlot(
+                parkingCharges,
+                cars,
+                bikes
+            );
+            if (bestAlternative.value > 0) {
+                profit += bestAlternative.value;
+                cars -= bestAlternative.require.cars;
+                bikes -= bestAlternative.require.bikes;
+                carSlots--;
+            } else {
+                break;
+            }
         }
     }
 
@@ -115,7 +132,6 @@ function assignParkingSlots(
         BikeRejections: bikeRejections,
     };
 }
-
 // Express part
 exports.calculateParking = (req, res) => {
     const data = req.body;
