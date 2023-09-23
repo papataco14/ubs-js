@@ -47,7 +47,7 @@ function scheduleLessons(lessonRequests) {
         }
     });
 
-    return { schedule };
+    return schedule;
 }
 
 exports.calculateCalendarScheduling = (req, res) => {
