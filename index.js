@@ -3,7 +3,7 @@ const morganBody = require("morgan-body");
 const routes = require("./routes");
 const PORT = process.env.PORT || 5000;
 
-const app = express().use(express.json());
+const app = express().use(express.json({ limit: "5mb" }));
 morganBody(app, { noColors: process.env.NODE_ENV === "production" });
 
 // Use routes

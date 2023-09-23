@@ -7,9 +7,13 @@ const {
 const {
     calculateGreedyMonkey,
 } = require("./controllers/greedyMonkeyController");
+const {
+    calculateCalendarScheduling,
+} = require("./controllers/calendarScheduleController");
 
 router.post("/square", calculateSquare);
 router.post("/digital-colony", calculateDigitalColony);
 router.post("/greedymonkey", calculateGreedyMonkey);
+router.post("/calendar-scheduling", calculateCalendarScheduling);
 
 module.exports = router;
