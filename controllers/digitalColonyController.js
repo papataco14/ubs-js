@@ -1,25 +1,50 @@
-function calculateWeight(colony, generations) {
-  for (let i = 0; i < generations; i++) {
-    let newColony = [];
-    let weight = Array.from(colony).reduce((acc, digit) => acc + parseInt(digit), 0);
+class Node {
+    constructor(value) {
+        this.value = value;
+        this.next = null;
+    }
+}
 
-    for (let j = 0; j < colony.length - 1; j++) {
-      let firstDigit = parseInt(colony[j]);
-      let secondDigit = parseInt(colony[j + 1]);
-      let signature = firstDigit >= secondDigit ? firstDigit - secondDigit : 10 - (secondDigit - firstDigit);
-      let newDigit = (weight + signature) % 10;
-      newColony.push(firstDigit, newDigit);
+function calculateWeight(colony, generations) {
+    // Convert the colony string to a linked list for efficient insertions
+    let head = new Node(parseInt(colony[0], 10));
+    let current = head;
+    let weight = head.value; // Initialize weight with the value of the head node
+
+    for (let i = 1; i < colony.length; i++) {
+        current.next = new Node(parseInt(colony[i], 10));
+        current = current.next;
+        weight += current.value; // Update the running total
     }
 
-    newColony.push(parseInt(colony[colony.length - 1]));
-    colony = newColony.join('');
-  }
+    // Main loop for each generation
+    for (let gen = 0; gen < generations; gen++) {
+        // Insert new nodes
+        current = head;
+        while (current && current.next) {
+            let signature =
+                current.value >= current.next.value
+                    ? current.value - current.next.value
+                    : 10 - (current.next.value - current.value);
+            let newDigit = (weight + signature) % 10;
 
-  return Array.from(colony).reduce((acc, digit) => acc + parseInt(digit), 0).toString();
+            let newNode = new Node(newDigit);
+            newNode.next = current.next;
+            current.next = newNode;
+
+            weight += newDigit; // Update the running total
+
+            current = newNode.next;
+        }
+    }
+
+    return weight.toString(); // The running total is the final weight
 }
 
 exports.calculateDigitalColony = (req, res) => {
-  const inputData = req.body;
-  const outputData = inputData.map(({ generations, colony }) => calculateWeight(colony, generations));
-  res.json(outputData);
+    const inputData = req.body;
+    const outputData = inputData.map(({ generations, colony }) =>
+        calculateWeight(colony, generations)
+    );
+    res.json(outputData);
 };
