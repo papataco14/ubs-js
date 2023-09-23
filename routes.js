@@ -8,10 +8,14 @@ const {
     calculateGreedyMonkey,
 } = require("./controllers/greedyMonkeyController");
 const { calculateParking } = require("./controllers/parkingController");
+const {
+    prioritizeAndFilterPassengers,
+} = require("./controllers/airportController");
 
 router.post("/square", calculateSquare);
 router.post("/digital-colony", calculateDigitalColony);
 router.post("/greedymonkey", calculateGreedyMonkey);
 router.post("/parking-lot", calculateParking);
+router.post("/airport", prioritizeAndFilterPassengers);
 
 module.exports = router;
