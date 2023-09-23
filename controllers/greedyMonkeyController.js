@@ -2,23 +2,13 @@ function maxFruitValue(w, v, fruits) {
     const dp = Array.from({ length: w + 1 }, () => Array(v + 1).fill(0));
 
     for (let i = 1; i <= fruits.length; i++) {
-        const newDp = JSON.parse(JSON.stringify(dp));
-        for (let weight = 0; weight <= w; weight++) {
-            for (let volume = 0; volume <= v; volume++) {
-                newDp[weight][volume] = dp[weight][volume];
-                const [fruitWeight, fruitVolume, fruitValue] = fruits[i - 1];
-                if (fruitWeight <= weight && fruitVolume <= volume) {
-                    newDp[weight][volume] = Math.max(
-                        newDp[weight][volume],
-                        dp[weight - fruitWeight][volume - fruitVolume] +
-                            fruitValue
-                    );
-                }
-            }
-        }
-        for (let weight = 0; weight <= w; weight++) {
-            for (let volume = 0; volume <= v; volume++) {
-                dp[weight][volume] = newDp[weight][volume];
+        const [fruitWeight, fruitVolume, fruitValue] = fruits[i - 1];
+        for (let weight = w; weight >= fruitWeight; weight--) {
+            for (let volume = v; volume >= fruitVolume; volume--) {
+                dp[weight][volume] = Math.max(
+                    dp[weight][volume],
+                    dp[weight - fruitWeight][volume - fruitVolume] + fruitValue
+                );
             }
         }
     }
