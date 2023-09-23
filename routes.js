@@ -7,9 +7,13 @@ const {
 const {
     calculateGreedyMonkey,
 } = require("./controllers/greedyMonkeyController");
+const {
+    calculateTeleportation,
+} = require("./controllers/teleportationController");
 
 router.post("/square", calculateSquare);
 router.post("/digital-colony", calculateDigitalColony);
 router.post("/greedymonkey", calculateGreedyMonkey);
+router.post("/teleportation", calculateTeleportation);
 
 module.exports = router;
