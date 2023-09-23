@@ -9,4 +9,6 @@ morganBody(app, { noColors: process.env.NODE_ENV === 'production' });
 // Use routes
 app.use('/', routes);
 
+app.get('/', (req, res) => res.send('Hello World!');
+
 app.listen(PORT, () => console.log(`Listening on ${PORT}`));
