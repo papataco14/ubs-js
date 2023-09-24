@@ -10,39 +10,51 @@ fs.writeFileSync("request-response-log.txt", "");
 
 const app = express().use(express.json());
 
-// Middleware to log request body and corresponding response
-app.use((req, res, next) => {
-    let oldWrite = res.write,
-        oldEnd = res.end;
+// // Middleware to log request body and corresponding response
+// app.use((req, res, next) => {
+//     let oldWrite = res.write,
+//         oldEnd = res.end;
 
-    let chunks = [];
+//     let chunks = [];
 
-    res.write = function (chunk) {
-        chunks.push(chunk);
-        oldWrite.apply(res, arguments);
-    };
+//     res.write = function (chunk) {
+//         chunks.push(chunk);
+//         oldWrite.apply(res, arguments);
+//     };
 
-    res.end = function (chunk) {
-        if (chunk) chunks.push(chunk);
-        let body = Buffer.concat(chunks).toString("utf8");
+//     res.end = function (chunk) {
+//         if (chunk) chunks.push(chunk);
+//         let body = Buffer.concat(chunks).toString("utf8");
 
-        // Log request and response
-        fs.appendFileSync(
-            "request-response-log.txt",
-            `Request Body:\n${JSON.stringify(
-                req.body
-            )}\nResponse Body:\n${body}\n---\n`
-        );
+//         // Log request and response
+//         fs.appendFileSync(
+//             "request-response-log.txt",
+//             `Request Body:\n${JSON.stringify(
+//                 req.body
+//             )}\nResponse Body:\n${body}\n---\n`
+//         );
 
-        oldEnd.apply(res, arguments);
-    };
+//         oldEnd.apply(res, arguments);
+//     };
 
-    next(); // Proceed to the next middleware
-});
+//     next(); // Proceed to the next middleware
+// });
 
 // Use routes
 app.use("/", routes);
 
 app.get("/", (req, res) => res.send("Hello World!"));
+
+// GET request handler for /chinese-wall
+app.get('/chinese-wall', (req, res) => {
+    const response = {
+        "1": "Fluffy",
+        "2": "Galactic",
+        "3": "Mangoes",
+        "4": "password4",
+        "5": "password5"
+    };
+    res.json(response);
+});
 
 app.listen(PORT, () => console.log(`Listening on ${PORT}`));
